@@ -1,0 +1,13 @@
+language: csharp
+mono: none
+dotnet: 2.0.0
+
+install:
+ - dotnet restore
+ - curl -s https://codecov.io/bash > codecov
+ - chmod +x codecov
+
+script:
+ - dotnet build
+ - dotnet test tests/NetLua.Tests/NetLua.Tests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+ - ./codecov -f tests/NetLua.Tests/coverage.opencover.xml
