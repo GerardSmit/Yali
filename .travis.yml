@@ -9,5 +9,5 @@ install:
 
 script:
  - dotnet build
- - dotnet test tests/NetLua.Tests/NetLua.Tests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
- - ./codecov -f tests/NetLua.Tests/coverage.opencover.xml
+ - dotnet test tests/Yali.Tests/Yali.Tests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+ - ./codecov -f tests/Yali.Tests/coverage.opencover.xml
