@@ -82,7 +82,7 @@ namespace Yali.Extensions
             engine.Set("rawset", LuaLibrary.Rawset);
             engine.Set("rawlen", LuaLibrary.RawLen);
             engine.Set("tonumber", LuaLibrary.ToNumber);
-            engine.Set("tostring", LuaLibrary.Tostring);
+            engine.Set("tostring", LuaLibrary.ToString);
             engine.Set("type", LuaLibrary.Type);
             engine.Set("ipairs", LuaLibrary.Ipairs);
             engine.Set("next", LuaLibrary.Next);
