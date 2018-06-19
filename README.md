@@ -44,10 +44,10 @@ public class SharedClass
     //  CancellationToken - The token that was given in "engine.ExecuteAsync" or "func.CallAsync".
     //  LuaArguments      - All the arguments given by Lua.
     //  Engine			  - The engine that called the method.
-	public static void Notice(Engine engine, LuaArguments args)
+    public static void Notice(Engine engine, LuaArguments args)
 	{
-		Console.WriteLine($"The engine {engine} said: {string.Join(", ", args.Select(a => a.AsString()))}");
-	}
+        Console.WriteLine($"The engine {engine} said: {string.Join(", ", args.Select(a => a.AsString()))}");
+    }
 
     // If the method is non-static Yali enforces the runtime to provide the SharedClass instance.
     // Which in Lua can be called with "instance:NonStatic()"
