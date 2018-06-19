@@ -1,4 +1,8 @@
 # Yali
+[![Build Status](https://travis-ci.com/GerardSmit/Yali.svg?branch=master)](https://travis-ci.com/GerardSmit/Yali)
+[![codecov](https://codecov.io/gh/GerardSmit/Yali/branch/master/graph/badge.svg)](https://codecov.io/gh/GerardSmit/Yali)
+ 
+
 Yali is **y**et **a**nother **Lua** **i**nterpreter for .NET.
 
 > **Note**: this project is still in development.
