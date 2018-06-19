@@ -41,7 +41,7 @@ namespace Yali.Native.Value
 
         public virtual IEnumerable<LuaObject> Keys => Enumerable.Empty<LuaObject>();
 
-        public virtual LuaObject Length => throw new LuaException($"attempt to get length of a {Type.ToName()} value");
+        public virtual LuaObject Length => throw new LuaException($"attempt to get length of a {Type.ToLuaName()} value");
 
         public virtual LuaObject GetMetaTable(Engine engine)
         {
@@ -50,7 +50,7 @@ namespace Yali.Native.Value
 
         public virtual void SetMetaTable(Engine engine, LuaObject value)
         {
-            throw new LuaException($"attempt to change the metatable of a {Type.ToName()} value");
+            throw new LuaException($"attempt to change the metatable of a {Type.ToLuaName()} value");
         }
 
         public virtual LuaObject GetMetaMethod(Engine engine, LuaObject key)
@@ -94,12 +94,12 @@ namespace Yali.Native.Value
 
         public virtual LuaObject IndexRaw(LuaObject key)
         {
-            throw new LuaException($"attempt to index a {Type.ToName()} value");
+            throw new LuaException($"attempt to index a {Type.ToLuaName()} value");
         }
 
         public virtual void NewIndexRaw(LuaObject key, LuaObject value)
         {
-            throw new LuaException($"attempt to index a {Type.ToName()} value");
+            throw new LuaException($"attempt to index a {Type.ToLuaName()} value");
         }
 
         public virtual Task<LuaArguments> CallAsync(Engine engine, LuaArguments args, CancellationToken token = default)
@@ -108,7 +108,7 @@ namespace Yali.Native.Value
 
             return call.IsFunction()
                 ? call.CallAsync(engine, args, token)
-                : throw new LuaException($"attempt to call a {Type.ToName()} value");
+                : throw new LuaException($"attempt to call a {Type.ToLuaName()} value");
         }
 
         public static async Task<LuaObject> BinaryOperationAsync(Engine engine, BinaryOp op, LuaObject left,
@@ -182,7 +182,7 @@ namespace Yali.Native.Value
                     }
                     else
                     {
-                        throw new LuaException($"attempt to compare {right.Type.ToName()} with {left.Type.ToName()}");
+                        throw new LuaException($"attempt to compare {right.Type.ToLuaName()} with {left.Type.ToLuaName()}");
                     }
 
                     break;
@@ -196,12 +196,12 @@ namespace Yali.Native.Value
                 case BinaryOp.Modulo:
                     if (!left.TryAsDouble(out leftDbl))
                     {
-                        throw new LuaException($"attempt to perform arithmetic on a {left.Type.ToName()} value");
+                        throw new LuaException($"attempt to perform arithmetic on a {left.Type.ToLuaName()} value");
                     }
 
                     if (!right.TryAsDouble(out rightDbl))
                     {
-                        throw new LuaException($"attempt to perform arithmetic on a {right.Type.ToName()} value");
+                        throw new LuaException($"attempt to perform arithmetic on a {right.Type.ToLuaName()} value");
                     }
 
                     break;
@@ -379,7 +379,7 @@ namespace Yali.Native.Value
 
         public virtual string AsString()
         {
-            return Type.ToName();
+            return Type.ToLuaName();
         }
 
         public virtual LuaObject ToNumber()

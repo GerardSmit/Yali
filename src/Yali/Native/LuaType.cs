@@ -21,6 +21,6 @@ namespace Yali.Native
 
     public static class LuaTypeExtensions
     {
-        public static string ToName(this LuaType type) => type.ToString().ToLower(CultureInfo.InvariantCulture);
+        public static string ToLuaName(this LuaType type) => type.ToString().ToLower(CultureInfo.InvariantCulture);
     }
 }

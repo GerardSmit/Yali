@@ -20,7 +20,7 @@ namespace Yali.Extensions
                 return;
             }
 
-            var typeNames = string.Join(" or ", types.Select(t => t.ToName()));
+            var typeNames = string.Join(" or ", types.Select(t => t.ToLuaName()));
             throw new LuaException($"bad argument #{id + 1} to 'setmetatable' ({typeNames} expected)");
         }
     }

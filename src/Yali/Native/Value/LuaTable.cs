@@ -57,6 +57,11 @@ namespace Yali.Native.Value
             return $"table: 0x{_hash}";
         }
 
+        public override double AsNumber()
+        {
+            return Length;
+        }
+
         public virtual bool ContainsKey(LuaObject key)
         {
             return _table.ContainsKey(key);

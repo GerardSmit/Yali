@@ -40,7 +40,7 @@ namespace Yali.Libraries
 
         public static LuaArguments RawEqual(LuaArguments args)
         {
-            return Lua.Args(args[0] == args[1]);
+            return Lua.Args(args[0].Equals(args[1]));
         }
 
         public static LuaArguments RawGet(LuaArguments args)
@@ -61,37 +61,17 @@ namespace Yali.Libraries
 
         public static LuaArguments ToNumber(LuaArguments args)
         {
-            return Lua.Args(args[0].ToNumber());
+            return Lua.Args(args[0].TryAsDouble(out var d) ? LuaObject.FromNumber(d) : LuaNil.Instance);
         }
 
-        public static Task<LuaArguments> Tostring(LuaArguments args, CancellationToken token = default)
+        public static Task<LuaArguments> ToString(LuaArguments args, CancellationToken token = default)
         {
             return Lua.ArgsAsync(args[0].AsString());
         }
 
-        public static LuaArguments Type(LuaArguments args)
+        public static LuaArguments Type(LuaArguments obj)
         {
-            switch (args[0].Type)
-            {
-                case LuaType.Boolean:
-                    return Lua.Args("boolean");
-                case LuaType.Function:
-                    return Lua.Args("function");
-                case LuaType.Nil:
-                    return Lua.Args("nil");
-                case LuaType.Number:
-                    return Lua.Args("number");
-                case LuaType.String:
-                    return Lua.Args("string");
-                case LuaType.Table:
-                    return Lua.Args("table");
-                case LuaType.Thread:
-                    return Lua.Args("thread");
-                case LuaType.UserData:
-                    return Lua.Args("userdata");
-                default:
-                    return Lua.Args();
-            }
+            return Lua.Args(obj[0].Type.ToLuaName());
         }
 
         private static async Task<LuaArguments> GetNext(Engine engine, LuaArguments x, CancellationToken token = default)

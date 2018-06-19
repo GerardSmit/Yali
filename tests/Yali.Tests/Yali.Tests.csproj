@@ -34,6 +34,7 @@
     <None Remove="Lua\024_Metatable_String.lua" />
     <None Remove="Lua\025_String_Library.lua" />
     <None Remove="Lua\026_Function_Table.lua" />
+    <None Remove="Lua\027_Lua_Functions.lua" />
   </ItemGroup>
 
   <ItemGroup>
