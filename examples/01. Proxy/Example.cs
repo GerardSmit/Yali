@@ -17,7 +17,7 @@ namespace Yali.Examples._01._Proxy
             await engine.ExecuteAsync(@"
 	            foo.print('Hello C#!')
 	            foo.wait(1000)
-	            foo.notice('Engine is automatically injected')
+	            foo.notice('Engine is automatically injected', 'and with LuaArguments you can give as many arguments you want', 'horray!')
 	            foo:nonstatic()
             ");
         }
