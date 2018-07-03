@@ -35,6 +35,9 @@
     <None Remove="Lua\025_String_Library.lua" />
     <None Remove="Lua\026_Function_Table.lua" />
     <None Remove="Lua\027_Lua_Functions.lua" />
+    <None Remove="Lua\028_Skip_Nil.lua" />
+    <None Remove="Lua\029_Proxy_Static.lua" />
+    <None Remove="Lua\030_MetaTable_Proxy.lua" />
   </ItemGroup>
 
   <ItemGroup>

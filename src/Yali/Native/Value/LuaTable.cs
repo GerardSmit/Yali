@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Yali.Extensions;
@@ -28,9 +29,9 @@ namespace Yali.Native.Value
         {
         }
 
-        public override IEnumerable<LuaObject> Keys => _table.Keys;
+        public override IEnumerable<LuaObject> Keys => _table.Keys.Where(k => !IndexRaw(k).IsNil());
 
-        public override LuaObject Length => FromNumber(_table.Count);
+        public override LuaObject Length => FromNumber(Keys.Count());
 
         public override LuaObject GetMetaTable(Engine engine)
         {

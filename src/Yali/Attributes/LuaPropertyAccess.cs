@@ -7,6 +7,7 @@ namespace Yali.Attributes
     {
         None = 0,
         Readable = 1,
-        Writeable = 2
+        Writeable = 2,
+        Both = 3
     }
 }

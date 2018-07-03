@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Yali.Extensions;
 using Yali.Native.Proxy;
 
 namespace Yali.Native.Value
@@ -16,7 +19,19 @@ namespace Yali.Native.Value
             _cacheItem = LuaProxyCache.Get(instance.GetType());
         }
 
-        public override LuaObject Length => _cacheItem.Methods.Count + _cacheItem.Properties.Count + base.Length;
+        public override IEnumerable<LuaObject> Keys => base.Keys
+            .Concat(_cacheItem.Properties.Keys.Select(FromString))
+            .Where(k => !IndexRaw(k).IsNil());
+
+        public override LuaObject GetMetaTable(Engine engine)
+        {
+            return engine.GetProxyMetaTable(_instance.GetType());
+        }
+
+        public override void SetMetaTable(Engine engine, LuaObject value)
+        {
+            throw new LuaException($"attempt to change metatable of a {Type.ToLuaName()} value");
+        }
 
         public override object ToObject()
         {
@@ -27,7 +42,7 @@ namespace Yali.Native.Value
         {
             var str = key.AsString();
 
-            return _cacheItem.Methods.ContainsKey(str) || _cacheItem.Properties.ContainsKey(str) || base.ContainsKey(key);
+            return _cacheItem.Properties.ContainsKey(str) || base.ContainsKey(key);
         }
 
         public override LuaObject IndexRaw(LuaObject key)
@@ -38,11 +53,6 @@ namespace Yali.Native.Value
             }
 
             var str = key.AsString();
-
-            if (_cacheItem.Methods.ContainsKey(str))
-            {
-                return _cacheItem.Methods[str];
-            }
 
             if (!_cacheItem.Properties.ContainsKey(str))
             {
@@ -77,17 +87,6 @@ namespace Yali.Native.Value
             }
 
             property.Info.SetValue(_instance, value.ToObject(property.Info.PropertyType));
-        }
-
-        public override Task<LuaArguments> CallAsync(Engine engine, LuaArguments args,
-            CancellationToken token = default)
-        {
-            if (_instance is ICallableProxy proxy)
-            {
-                return proxy.CallAsync(args, token);
-            }
-
-            return base.CallAsync(engine, args, token);
         }
     }
 }

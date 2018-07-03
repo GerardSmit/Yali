@@ -10,7 +10,7 @@ namespace Yali.Examples._01._Proxy
 {
     // To use a C# class in Lua you'll have to add the attribute [LuaClass].
     // By default the methods are not visible and can be registered with the attribute [LuaMethod].
-    // You can change this behavior with by setting the property "DefaultMethodVisible" to true.
+    // You can change this behavior by setting the property "DefaultMethodVisible" to true.
     [LuaClass(DefaultMethodVisible = true)]
     public class SharedClass
     {
@@ -23,7 +23,7 @@ namespace Yali.Examples._01._Proxy
         // The following types will be automatically added without the need of providing them in Lua:
         //  CancellationToken - The token that was given in "engine.ExecuteAsync" or "func.CallAsync".
         //  LuaArguments      - All the arguments given by Lua.
-        //  Engine			  - The engine that called the method.
+        //  Engine            - The engine that called the method.
         public static void Notice(Engine engine, LuaArguments args)
         {
             Console.WriteLine($"The engine {engine} said: {string.Join(", ", args.Select(a => a.AsString()))}");

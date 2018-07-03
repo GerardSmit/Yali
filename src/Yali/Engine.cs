@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Yali.Extensions;
 using Yali.Native;
+using Yali.Native.Proxy;
 using Yali.Native.Value;
 using Yali.Native.Value.Functions;
 using Yali.Runtime;
@@ -16,6 +18,8 @@ namespace Yali
         private readonly LuaParser _parser = new LuaParser();
         private readonly StatementInterpreter _statementInterpreter;
         private readonly ExpressionIntepreter _expressionIntepreter;
+        private readonly ConcurrentDictionary<Type, LuaTable> _proxyTables;
+        private readonly ConcurrentDictionary<Type, LuaTable> _metaTables;
 
         public Engine()
         {
@@ -23,6 +27,8 @@ namespace Yali
             StringMetaTable = new LuaTable();
             _statementInterpreter = new StatementInterpreter(this);
             _expressionIntepreter = new ExpressionIntepreter(this);
+            _proxyTables = new ConcurrentDictionary<Type, LuaTable>();
+            _metaTables = new ConcurrentDictionary<Type, LuaTable>();
 
             Global.NewIndexRaw("_G", Global);
         }
@@ -40,9 +46,41 @@ namespace Yali
                 .AddMathLibrary();
         }
 
-        public LuaTable StringMetaTable { get; }
+        public LuaTable StringMetaTable { get; set; }
 
         public LuaTable Global { get; }
+
+        public LuaTable GetProxyTable(Type type)
+        {
+            return _proxyTables.GetOrAdd(type, t =>
+            {
+                var cache = LuaProxyCache.Get(t);
+                var table = new LuaTable();
+
+                foreach (var kv in cache.Methods)
+                {
+                    table.NewIndexRaw(kv.Key, kv.Value);
+                }
+                
+                return table;
+            });
+        }
+
+        public LuaTable GetProxyMetaTable(Type type)
+        {
+            return _metaTables.GetOrAdd(type, t =>
+            {
+                var mt = new LuaTable();
+                mt.NewIndexRaw("__index", GetProxyTable(t));
+
+                if (typeof(ICallableProxy).IsAssignableFrom(t))
+                {
+                    mt.NewIndexRaw("__call", LuaCallableFunction.Instance);
+                }
+
+                return mt;
+            });
+        }
 
         public Task<LuaArguments> ExecuteAsync(string str, CancellationToken token = default)
         {
@@ -51,7 +89,17 @@ namespace Yali
 
         public Task<LuaArguments> ExecuteAsync(string str, LuaArguments args, CancellationToken token = default)
         {
-            return Parse(str).CallAsync(this, args, token);
+            return ExecuteAsync(Parse(str), args, token);
+        }
+
+        public Task<LuaArguments> ExecuteAsync(LuaFunction func, CancellationToken token = default)
+        {
+            return func.CallAsync(this, Lua.Args(), token);
+        }
+
+        public Task<LuaArguments> ExecuteAsync(LuaFunction func, LuaArguments args, CancellationToken token = default)
+        {
+            return func.CallAsync(this, args, token);
         }
 
         public LuaFunction Parse(string str)

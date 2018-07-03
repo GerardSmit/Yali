@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Yali.Extensions;
 using Yali.Native;
 using Yali.Native.Value;
 using Yali.Native.Value.Functions;
@@ -10,8 +12,29 @@ namespace Yali.Utils
 {
     internal static class MethodUtils
     {
-        public static object[] GetArguments(MethodBase method, Engine engine, LuaArguments args, int offset = 0, CancellationToken token = default)
+        private static object InvokeMethod(MethodBase method, Engine engine, LuaArguments args, CancellationToken token = default)
         {
+            var instance = (object) null;
+            var offset = 0;
+
+            if (!method.IsStatic)
+            {
+                try
+                {
+                    if (args[0].IsNil())
+                    {
+                        throw new ArgumentException();
+                    }
+
+                    offset = 1;
+                    instance = args[0].ToObject(method.DeclaringType);
+                }
+                catch (ArgumentException)
+                {
+                    throw new LuaException("bad argument #1");
+                }
+            }
+
             var index = offset;
             var parameters = method.GetParameters();
             var methodArgs = new object[parameters.Length];
@@ -40,20 +63,33 @@ namespace Yali.Utils
                 {
                     if (!parameter.HasDefaultValue)
                     {
-                        throw new LuaException($"expected {parameters.Length + offset} arguments, got {args.Length} instead");
+                        var paramCount = parameters.Count(p =>
+                            p.ParameterType != typeof(LuaArguments) && 
+                            p.ParameterType != typeof(CancellationToken) &&
+                            p.ParameterType != typeof(Engine)
+                        );
+
+                        throw new LuaException($"expected {paramCount} arguments, got {argCount} instead");
                     }
 
                     arg = parameter.DefaultValue;
                 }
                 else
                 {
-                    arg = args[index++].ToObject(parameter.ParameterType);
+                    try
+                    {
+                        arg = args[index++].ToObject(parameter.ParameterType);
+                    }
+                    catch (ArgumentException)
+                    {
+                        throw new LuaException($"bad argument #{index + 1}");
+                    }
                 }
 
                 methodArgs[i] = arg;
             }
 
-            return methodArgs;
+            return method.Invoke(instance, methodArgs);
         }
 
         private static LuaArguments CreateArgs(object obj)
@@ -74,46 +110,15 @@ namespace Yali.Utils
             // Non-async
             if (!isTask)
             {
-                return new LuaDirectFunction((e, args) =>
-                {
-                    object self;
-                    object[] methodArgs;
-
-                    if (method.IsStatic)
-                    {
-                        self = null;
-                        methodArgs = GetArguments(method, e, args);
-                    }
-                    else
-                    {
-                        self = args[0].ToObject(method.DeclaringType);
-                        methodArgs = GetArguments(method, e, args, 1);
-                    }
-
-                    return CreateArgs(method.Invoke(self, methodArgs));
-                });
+                return new LuaDirectFunction((engine, args) => CreateArgs(InvokeMethod(method, engine, args)));
             }
 
             // Async
             var hasReturn = returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof(Task<>);
 
-            return new LuaAsyncFunction(async (e, args, token) =>
+            return new LuaAsyncFunction(async (engine, args, token) =>
             {
-                object self;
-                object[] methodArgs;
-
-                if (method.IsStatic)
-                {
-                    self = null;
-                    methodArgs = GetArguments(method, e, args, 0, token);
-                }
-                else
-                {
-                    self = args[0].ToObject(method.DeclaringType);
-                    methodArgs = GetArguments(method, e, args, 1, token);
-                }
-
-                var task = (Task)method.Invoke(self, methodArgs);
+                var task = (Task)InvokeMethod(method, engine, args, token);
 
                 await task;
 

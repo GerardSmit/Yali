@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Sdk;
@@ -45,6 +46,12 @@ namespace Yali.Tests.Libraries
         public static void False(LuaObject obj)
         {
             Assert.False(obj.AsBool());
+        }
+
+        [LuaMethod("Throws")]
+        public static Task Throws(Engine engine, LuaObject obj, LuaArguments args)
+        {
+            return Assert.ThrowsAsync<LuaException>(() => obj.CallAsync(engine, Lua.Args(args.Skip(1))));
         }
 
         public Task<LuaArguments> CallAsync(LuaArguments args, CancellationToken token = default)

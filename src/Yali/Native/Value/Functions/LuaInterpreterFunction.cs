@@ -8,13 +8,11 @@ namespace Yali.Native.Value.Functions
 {
     public class LuaInterpreterFunction : LuaFunction
     {
-        private readonly Engine _engine;
         private readonly FunctionDefinition _definition;
         private readonly bool _useParent;
 
         public LuaInterpreterFunction(Engine engine, FunctionDefinition definition, LuaObject context, bool useParent)
         {
-            _engine = engine;
             _definition = definition;
             Context = context;
             _useParent = useParent;
@@ -42,7 +40,7 @@ namespace Yali.Native.Value.Functions
 
             // Execute the statements.
             var state = new LuaState(engine, context);
-            await _engine.ExecuteStatement(_definition.Body, state, token);
+            await engine.ExecuteStatement(_definition.Body, state, token);
 
             return state.FunctionState.ReturnArguments;
         }

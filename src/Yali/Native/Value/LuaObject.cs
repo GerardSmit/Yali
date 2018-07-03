@@ -26,7 +26,6 @@ namespace Yali.Native.Value
             Type = type;
         }
 
-        // TODO: Re-implement this.
         //~LuaObject()
         //{
         //    var method = GetMetaMethod(TODO, "__gc");

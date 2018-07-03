@@ -72,7 +72,7 @@ namespace Yali.Native.Proxy
             return new LuaProxyCacheItem
             {
                 Methods = methods.ToDictionary(m => m.Name, m => LuaObject.FromFunction(m.Info)),
-                Properties = properties.ToDictionary(p => p.Info.Name, p => p)
+                Properties = properties.ToDictionary(p => p.Name, p => p)
             };
         }
     }

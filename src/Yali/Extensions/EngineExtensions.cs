@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Yali.Libraries;
 using Yali.Native;
+using Yali.Native.Proxy;
 using Yali.Native.Value;
 
 namespace Yali.Extensions
@@ -45,30 +46,19 @@ namespace Yali.Extensions
             return engine.Set(key, LuaObject.FromObject(value));
         }
 
-        public static Engine AddMathLibrary(this Engine engine)
+        public static Engine SetClass(this Engine engine, LuaObject key, Type type)
         {
-            engine.Set("math", new MathLibrary());
-
-            return engine;
+            return engine.Set(key, engine.GetProxyTable(type));
         }
 
-        public static Engine AddStringFunctions(this Engine engine, LuaObject table)
+        public static Engine SetClass<TClass>(this Engine engine, LuaObject key)
         {
-            var current = engine.StringMetaTable.IndexRaw("__index");
+            return engine.SetClass(key, typeof(TClass));
+        }
 
-            if (current.IsNil())
-            {
-                engine.StringMetaTable.NewIndexRaw("__index", table);
-            }
-            else
-            {
-                foreach (var key in table.Keys)
-                {
-                    current.NewIndexRaw(key, table.IndexRaw(key));
-                }
-            }
-
-            return engine;
+        public static Engine AddMathLibrary(this Engine engine)
+        {
+            return engine.SetClass<MathLibrary>("math");
         }
 
         public static Engine AddLuaLibrary(this Engine engine)
@@ -93,10 +83,11 @@ namespace Yali.Extensions
 
         public static Engine AddStringLibrary(this Engine engine)
         {
-            var table = LuaObject.FromObject(new StringLibrary());
-
+            var table = engine.GetProxyTable(typeof(StringLibrary));
+            var mt = engine.GetProxyMetaTable(typeof(StringLibrary));
+            
             engine.Set("string", table);
-            engine.AddStringFunctions(table);
+            engine.StringMetaTable = mt;
 
             return engine;
         }
