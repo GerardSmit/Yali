@@ -22,6 +22,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using Irony.Parsing;
 
@@ -38,7 +39,9 @@ namespace Yali.Runtime
             var SingleString = new StringLiteral("string", "'", StringOptions.AllowsAllEscapes);
             var DoubleString = new StringLiteral("string", "\"", StringOptions.AllowsAllEscapes);
             var MultiLineString = new CommentTerminal("string", "[[", "]]");
+
             var Number = new NumberLiteral("number");
+            Number.DefaultIntTypes = new[] { TypeCode.UInt64, TypeCode.Double };
             Number.AddPrefix("0x", NumberOptions.Hex);
 
             var LineComment = new CommentTerminal("Comment", "--", "\n", "\r");

@@ -11,5 +11,7 @@ namespace Yali.Native.Proxy
         public bool Writeable { get; set; }
 
         public bool Readable { get; set; }
+
+        public bool IsStatic { get; set; }
     }
 }

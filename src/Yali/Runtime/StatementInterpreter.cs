@@ -36,7 +36,10 @@ namespace Yali.Runtime
             for (var i = 0; i < assign.Variables.Count; i++)
             {
                 var expr = assign.Variables[i];
-                var ret = await _engine.EvaluateExpression(assign.Expressions[i], state, token);
+
+                var ret = i < assign.Expressions.Count 
+                    ? await _engine.EvaluateExpression(assign.Expressions[i], state, token)
+                    : Lua.Args();
 
                 if (expr is Variable var)
                 {

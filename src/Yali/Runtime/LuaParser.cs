@@ -696,7 +696,7 @@ namespace Yali.Runtime
                 ParseTreeNode child = node.ChildNodes[0];
                 if (child.Token != null && child.Token.Terminal is NumberLiteral)
                 {
-                    return new Runtime.Ast.NumberLiteral() { Value = (child.Token.Value is double ? (double)(child.Token.Value) : (int)(child.Token.Value)) };
+                    return new Runtime.Ast.NumberLiteral() { Value = Convert.ToDouble(child.Token.Value) };
                 }
                 else if (child.Token != null && child.Token.Terminal is StringLiteral)
                 {

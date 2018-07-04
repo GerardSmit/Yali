@@ -8,5 +8,7 @@ namespace Yali.Native.Proxy
         public IDictionary<string, LuaObject> Methods { get; set; }
 
         public IDictionary<string, LuaProxyCacheItemProperty> Properties { get; set; }
+
+        public IDictionary<string, LuaProxyCacheItemProperty> StaticProperties { get; set; }
     }
 }

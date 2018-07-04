@@ -2,12 +2,17 @@
 using System.Linq;
 using Yali.Attributes;
 using Yali.Native;
+using Yali.Native.Value;
 
 namespace Yali.Libraries
 {
-    [LuaClass(DefaultMethodVisible = true)]
+    [LuaClass(DefaultMethodVisible = true, DefaultPropertyAccess = LuaPropertyAccess.Both)]
     public class MathLibrary
     {
+        public static double Pi { get; } = Math.PI;
+
+        public static double Huge { get; } = double.PositiveInfinity;
+
         public static LuaArguments Abs(LuaArguments args)
         {
             return Lua.Args(Math.Abs(args[0]));
@@ -105,6 +110,31 @@ namespace Yali.Libraries
         public static LuaArguments Tanh(LuaArguments args)
         {
             return Lua.Args(Math.Tanh(args[0]));
+        }
+
+        public static LuaObject IsInf(double obj)
+        {
+            if (double.IsNegativeInfinity(obj))
+            {
+                return -1;
+            }
+
+            if (double.IsPositiveInfinity(obj))
+            {
+                return 1;
+            }
+
+            return false;
+        }
+
+        public static LuaObject IsNaN(double obj)
+        {
+            return double.IsNaN(obj);
+        }
+
+        public static LuaObject Finite(double obj)
+        {
+            return IsInf(obj) || IsNaN(obj);
         }
     }
 }

@@ -43,7 +43,8 @@ namespace Yali
             return Create()
                 .AddLuaLibrary()
                 .AddStringLibrary()
-                .AddMathLibrary();
+                .AddMathLibrary()
+                .AddBit32Library();
         }
 
         public LuaTable StringMetaTable { get; set; }
@@ -56,6 +57,12 @@ namespace Yali
             {
                 var cache = LuaProxyCache.Get(t);
                 var table = new LuaTable();
+
+                foreach (var kv in cache.StaticProperties)
+                {
+                    // TODO: Implement set.
+                    table.NewIndexRaw(kv.Key, LuaObject.FromObject(kv.Value.Info.GetValue(null)));
+                }
 
                 foreach (var kv in cache.Methods)
                 {

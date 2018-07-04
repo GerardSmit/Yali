@@ -58,7 +58,15 @@ namespace Yali.Extensions
 
         public static Engine AddMathLibrary(this Engine engine)
         {
-            return engine.SetClass<MathLibrary>("math");
+            engine.SetClass<MathLibrary>("math");
+            engine.Set("inf", MathLibrary.Huge);
+            return engine;
+        }
+
+        public static Engine AddBit32Library(this Engine engine)
+        {
+            engine.SetClass<Bit32>("bit32");
+            return engine;
         }
 
         public static Engine AddLuaLibrary(this Engine engine)
@@ -76,6 +84,7 @@ namespace Yali.Extensions
             engine.Set("type", LuaLibrary.Type);
             engine.Set("ipairs", LuaLibrary.Ipairs);
             engine.Set("next", LuaLibrary.Next);
+            engine.Set("unpack", LuaLibrary.Unpack);
             engine.Set("pairs", LuaLibrary.Pairs);
 
             return engine;

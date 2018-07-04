@@ -134,5 +134,10 @@ namespace Yali.Libraries
                 ? Lua.Args() 
                 : Lua.Args(keys[pos + 1], table.IndexRaw(keys[pos + 1]));
         }
+
+        public static LuaArguments Unpack(LuaArguments args)
+        {
+            return args;
+        }
     }
 }

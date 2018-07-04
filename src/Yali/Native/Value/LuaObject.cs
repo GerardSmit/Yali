@@ -193,15 +193,8 @@ namespace Yali.Native.Value
                 case BinaryOp.Multiplication:
                 case BinaryOp.Power:
                 case BinaryOp.Modulo:
-                    if (!left.TryAsDouble(out leftDbl))
-                    {
-                        throw new LuaException($"attempt to perform arithmetic on a {left.Type.ToLuaName()} value");
-                    }
-
-                    if (!right.TryAsDouble(out rightDbl))
-                    {
-                        throw new LuaException($"attempt to perform arithmetic on a {right.Type.ToLuaName()} value");
-                    }
+                    leftDbl = left.AsNumber();
+                    rightDbl = right.AsNumber();
 
                     break;
                 default:
@@ -389,6 +382,11 @@ namespace Yali.Native.Value
         public virtual double AsNumber()
         {
             return ToNumber().ToObject() is double d ? d : double.NaN;
+        }
+
+        public virtual int AsInt()
+        {
+            return ToNumber().ToObject() is double d ? (int) d : 0;
         }
 
         public virtual LuaObject ToBoolean()

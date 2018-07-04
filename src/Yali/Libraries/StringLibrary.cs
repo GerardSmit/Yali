@@ -115,6 +115,11 @@ namespace Yali.Libraries
             return new string(chars);
         }
 
+        public static string Format(LuaArguments args)
+        {
+            return InternalStringUtils.Sprintf(args[0].AsString(), args.Skip(1).Select(i => i.ToObject()).ToArray());
+        }
+
         public static string Rep(string str, int num)
         {
             return new StringBuilder(str.Length * num).Insert(0, str, num).ToString();

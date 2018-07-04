@@ -38,6 +38,7 @@
     <None Remove="Lua\028_Skip_Nil.lua" />
     <None Remove="Lua\029_Proxy_Static.lua" />
     <None Remove="Lua\030_MetaTable_Proxy.lua" />
+    <None Remove="Lua\031_Bit32_Library.lua" />
   </ItemGroup>
 
   <ItemGroup>

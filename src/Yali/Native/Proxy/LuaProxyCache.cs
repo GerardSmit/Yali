@@ -53,7 +53,7 @@ namespace Yali.Native.Proxy
                 })
                 .Where(m => m.Visible);
 
-            var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
                 .Select(p =>
                 {
                     var attr = p.GetCustomAttributeDeep<LuaPropertyAttribute>();
@@ -64,15 +64,18 @@ namespace Yali.Native.Proxy
                         Name = attr?.Name ?? p.Name.ToLower(CultureInfo.InvariantCulture),
                         Writeable = p.CanWrite && access.HasFlag(LuaPropertyAccess.Writeable),
                         Readable = p.CanRead && access.HasFlag(LuaPropertyAccess.Readable),
+                        IsStatic = p.GetAccessors(true)[0].IsStatic,
                         Info = p
                     };
                 })
-                .Where(p => p.Readable || p.Writeable);
+                .Where(p => p.Readable || p.Writeable)
+                .ToArray();
 
             return new LuaProxyCacheItem
             {
                 Methods = methods.ToDictionary(m => m.Name, m => LuaObject.FromFunction(m.Info)),
-                Properties = properties.ToDictionary(p => p.Name, p => p)
+                Properties = properties.Where(p => !p.IsStatic).ToDictionary(p => p.Name, p => p),
+                StaticProperties = properties.Where(p => p.IsStatic).ToDictionary(p => p.Name, p => p)
             };
         }
     }

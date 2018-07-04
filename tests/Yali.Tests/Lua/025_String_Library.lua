@@ -84,3 +84,11 @@ assert.False(string.match("00FF00", "^%X+$"))
 local emailPattern = "^[A-Za-z0-9%.]+@[%a%d]+%.[%a%d]+$";
 assert.True(string.match("foo@bar.baz", emailPattern))
 assert.False(string.match("foo", emailPattern))
+
+-- Format
+assert.Equal('Hello "Lua user!"', string.format("%s %q", "Hello", "Lua user!"))
+assert.Equal("Lua", string.format("%c%c%c", 76,117,97))
+assert.Equal("3.141593e+000, 3.141593E+000", string.format("%e, %E", math.pi,math.pi))
+assert.Equal("3.141593, 3.14159", string.format("%f, %g", math.pi,math.pi))
+assert.Equal("-100, -100, 4294967196", string.format("%d, %i, %u", -100,-100,-100))
+assert.Equal("37777777634, ffffff9c, FFFFFF9C", string.format("%o, %x, %X", -100,-100,-100))

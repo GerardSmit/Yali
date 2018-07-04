@@ -33,5 +33,14 @@ namespace Yali.Tests
 
             Assert.True(result[0].AsBool());
         }
+
+        [Fact]
+        public async Task TestLargeNumber()
+        {
+            var func = _engine.Parse("return 4294967294");
+            var result = await _engine.ExecuteAsync(func);
+
+            Assert.Equal(4294967294d, result[0].AsNumber());
+        }
     }
 }
